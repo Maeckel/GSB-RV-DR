@@ -1,11 +1,12 @@
 package fr.gsb.rv.dr;
 
+import fr.gsb.rv.dr.entites.Praticien;
 import fr.gsb.rv.dr.entites.Visiteur;
 import fr.gsb.rv.dr.modeles.ModeleGsbRv;
-import fr.gsb.rv.dr.technique.ConnexionBD;
-import fr.gsb.rv.dr.technique.ConnexionException;
-import fr.gsb.rv.dr.technique.Session;
-import fr.gsb.rv.dr.technique.VueConnexion;
+import fr.gsb.rv.dr.technique.*;
+import fr.gsb.rv.dr.utilitaires.ComparateurCoefConfiance;
+import fr.gsb.rv.dr.utilitaires.ComparateurCoefNotoriete;
+import fr.gsb.rv.dr.utilitaires.ComparateurDateVisite;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -13,15 +14,23 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class Appli extends Application {
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws ConnexionException {
+
+        PanneauAccueil vueAccueil = new PanneauAccueil();
+        PanneauRapports vueRapports = new PanneauRapports();
+        PanneauPracticiens vuePracticiens = new PanneauPracticiens();
+        StackPane Pile = new StackPane(vueAccueil , vueRapports , vuePracticiens);
 
         MenuBar Menu = new MenuBar();
 
@@ -47,6 +56,7 @@ public class Appli extends Application {
 
         BorderPane root = new BorderPane();
         root.setTop(Menu);
+        root.setCenter(vueAccueil);
 
         Visiteur visiteur = new Visiteur() ; //Création de l'utilisateur
 
@@ -67,22 +77,24 @@ public class Appli extends Application {
                     public void handle(ActionEvent actionEvent) {
                         VueConnexion vue = new VueConnexion();
                         Optional<Pair <String,String>> reponse = vue.showAndWait();
-                        try {
-                            ConnexionBD.getConnexion();
-                            ModeleGsbRv.seConnecter( reponse.get().getKey(), reponse.get().getValue() );
-                            if(ModeleGsbRv.seConnecter( reponse.get().getKey(), reponse.get().getValue() ) != null){
-                                visiteur.setMatricule(ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue()).getMatricule());
-                                visiteur.setNom(ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue()).getNom());
-                                visiteur.setPrenom(ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue()).getPrenom());
-                                Session.ouvrir(visiteur);
-                                primaryStage.setTitle(visiteur.getNom() + " " + visiteur.getPrenom()); //Affichage du nom et prénom de l'utilisateur
-                                seConnecter.setVisible(false);
-                                seDeconnecter.setVisible(true);
-                                Rapports.setVisible(true);
-                                Practiciens.setVisible(true);
+                        if(reponse.isPresent()) {
+                            try {
+                                ConnexionBD.getConnexion();
+                                ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue());
+                                if (ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue()) != null) {
+                                    visiteur.setMatricule(ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue()).getMatricule());
+                                    visiteur.setNom(ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue()).getNom());
+                                    visiteur.setPrenom(ModeleGsbRv.seConnecter(reponse.get().getKey(), reponse.get().getValue()).getPrenom());
+                                    Session.ouvrir(visiteur);
+                                    primaryStage.setTitle(visiteur.getNom() + " " + visiteur.getPrenom()); //Affichage du nom et prénom de l'utilisateur
+                                    seConnecter.setVisible(false);
+                                    seDeconnecter.setVisible(true);
+                                    Rapports.setVisible(true);
+                                    Practiciens.setVisible(true);
+                                }
+                            } catch (ConnexionException e) {
+                                throw new RuntimeException(e);
                             }
-                        } catch (ConnexionException e) {
-                            throw new RuntimeException(e);
                         }
                         System.out.println(seConnecter.getText());
                     }
@@ -98,7 +110,10 @@ public class Appli extends Application {
                         seDeconnecter.setVisible(false);
                         Rapports.setVisible(false);
                         Practiciens.setVisible(false);
-                        Session.fermer();
+                        root.setCenter(vueAccueil);
+                        if(Session.estOuverte() == true) {
+                            Session.fermer();
+                        }
                         primaryStage.setTitle("GSB-RV-DR"); //Fin de la session
                     }
                 }
@@ -129,6 +144,7 @@ public class Appli extends Application {
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
+                        root.setCenter(vueRapports);
                         System.out.println("[Rapports]" + " " + visiteur.getNom() + " " + visiteur.getPrenom()); //Affiche la chaine concaténée
                     }
                 }
@@ -138,19 +154,13 @@ public class Appli extends Application {
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
+                        root.setCenter(vuePracticiens);
                         System.out.println("[Practiciens]" + " " + visiteur.getNom() + " " + visiteur.getPrenom()); //Affiche la chaine concaténée
                     }
                 }
         );
     }
     public static void main(String[] args)  {
-
-        try {
-            ConnexionBD.getConnexion();
-            ModeleGsbRv.seConnecter( "a131" , "azerty" );
-        } catch (ConnexionException e) {
-            throw new RuntimeException(e);
-        }
         launch(args) ;
     }
 }
