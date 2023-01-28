@@ -1,6 +1,7 @@
 package fr.gsb.rv.dr;
 
 import fr.gsb.rv.dr.entites.Praticien;
+import fr.gsb.rv.dr.entites.RapportVisite;
 import fr.gsb.rv.dr.entites.Visiteur;
 import fr.gsb.rv.dr.modeles.ModeleGsbRv;
 import fr.gsb.rv.dr.technique.*;
@@ -9,6 +10,7 @@ import fr.gsb.rv.dr.utilitaires.ComparateurCoefNotoriete;
 import fr.gsb.rv.dr.utilitaires.ComparateurDateVisite;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -18,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +73,8 @@ public class Appli extends Application {
         seDeconnecter.setVisible(false);
         Rapports.setVisible(false);
         Practiciens.setVisible(false);
+
+        List<RapportVisite> test = ModeleGsbRv.getRapportsVisites("b19", "07", 2022);
 
         seConnecter.setOnAction(
                 new EventHandler<ActionEvent>() {

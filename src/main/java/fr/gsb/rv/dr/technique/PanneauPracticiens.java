@@ -9,17 +9,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -48,15 +44,15 @@ public class PanneauPracticiens extends Parent {
         DateVisite.isVisible();
 
         TableView<Praticien> Table = new TableView<Praticien>();
-        TableColumn<Praticien, String> colNumero = new TableColumn<Praticien, String>("Numero");
-        TableColumn<Praticien, String> colNom = new TableColumn<Praticien, String>("Nom");
-        TableColumn<Praticien, String> colVille = new TableColumn<Praticien, String>("Ville");
+        TableColumn<Praticien, Mois> colNumero = new TableColumn<Praticien, Mois>("Numero");
+        TableColumn<Praticien, Mois> colNom = new TableColumn<Praticien, Mois>("Nom");
+        TableColumn<Praticien, Mois> colVille = new TableColumn<Praticien, Mois>("Ville");
         TableColumn<Praticien, Double> colCoefNoto = new TableColumn<Praticien, Double>("coefNotoriete");
         TableColumn<Praticien, Date> colDate = new TableColumn<Praticien, Date>("dateDerniereVisite");
         TableColumn<Praticien, Integer> colCoefConf = new TableColumn<Praticien, Integer>("dernierCoefConfiance");
-        colNumero.setCellValueFactory(new PropertyValueFactory<Praticien, String>("Numero"));
-        colNom.setCellValueFactory(new PropertyValueFactory<Praticien, String>("Nom"));
-        colVille.setCellValueFactory(new PropertyValueFactory<Praticien, String>("Ville"));
+        colNumero.setCellValueFactory(new PropertyValueFactory<Praticien, Mois>("Numero"));
+        colNom.setCellValueFactory(new PropertyValueFactory<Praticien, Mois>("Nom"));
+        colVille.setCellValueFactory(new PropertyValueFactory<Praticien, Mois>("Ville"));
         colCoefNoto.setCellValueFactory(new PropertyValueFactory<Praticien, Double>("coefNotoriete"));
         colDate.setCellValueFactory(new PropertyValueFactory<Praticien, Date>("dateDerniereVisite"));
         colCoefConf.setCellValueFactory(new PropertyValueFactory<Praticien, Integer>("dernierCoefConfiance"));
@@ -76,7 +72,7 @@ public class PanneauPracticiens extends Parent {
         Table.setItems(praticiens);
 
 
-        VBox practiciens = new VBox(30);
+        VBox practiciens = new VBox(50);
         practiciens.getChildren().add(new Label("Selectionner un critere de tri :"));
         practiciens.getChildren().add(Confiance);
         practiciens.getChildren().add(Notoriété);
