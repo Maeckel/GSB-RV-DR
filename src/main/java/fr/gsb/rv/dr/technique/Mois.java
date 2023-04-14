@@ -8,8 +8,7 @@ public enum Mois {Janvier("01") , Février("02") , Mars("03") , Avril("04") , Ma
         this.text = text;
     }
 
-    public String toString(){
+    public String getText() {
         return text;
     }
-
 }

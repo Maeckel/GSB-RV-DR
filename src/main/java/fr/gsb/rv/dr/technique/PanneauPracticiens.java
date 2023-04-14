@@ -87,10 +87,6 @@ public class PanneauPracticiens extends Parent {
                     public void handle(ActionEvent actionEvent) {
                         critereTri = CRITERE_COEF_CONFIANCE;
                         rafraichir();
-                        for(Praticien unpraticien : praticiens) {
-                            System.out.println();
-                            System.out.println(unpraticien);
-                        }
                     }
                 }
         );
@@ -101,10 +97,6 @@ public class PanneauPracticiens extends Parent {
                     public void handle(ActionEvent actionEvent) {
                         critereTri = CRITERE_COEF_NOTORIETE;
                         rafraichir();
-                        for(Praticien unpraticien : praticiens) {
-                            System.out.println();
-                            System.out.println(unpraticien);
-                        }
                     }
                 }
         );
@@ -115,10 +107,6 @@ public class PanneauPracticiens extends Parent {
                     public void handle(ActionEvent actionEvent) {
                         critereTri = CRITERE_DATE_VISITE;
                         rafraichir();
-                        for(Praticien unpraticien : praticiens) {
-                            System.out.println();
-                            System.out.println(unpraticien);
-                        }
                     }
                 }
         );

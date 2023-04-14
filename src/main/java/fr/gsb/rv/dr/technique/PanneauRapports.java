@@ -1,5 +1,6 @@
 package fr.gsb.rv.dr.technique;
 
+import fr.gsb.rv.dr.entites.Praticien;
 import fr.gsb.rv.dr.entites.RapportVisite;
 import fr.gsb.rv.dr.entites.Visiteur;
 import fr.gsb.rv.dr.modeles.ModeleGsbRv;
@@ -24,8 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static jdk.nashorn.internal.objects.NativeDate.setDate;
-
 public class PanneauRapports extends Parent {
 
     private ComboBox<Visiteur> cbVisiteurs = new ComboBox<Visiteur>();
@@ -44,6 +43,7 @@ public class PanneauRapports extends Parent {
         }
 
         cbMois.getItems().setAll(Mois.values());
+
         LocalDate aujourdhui = LocalDate.now();
         int anneeCourante = aujourdhui.getYear();
         List<Integer> annees = new ArrayList<Integer>();
@@ -121,6 +121,26 @@ public class PanneauRapports extends Parent {
         Table.getColumns().add(colVille);
 
 
+        Table.setOnMouseClicked(
+                (MouseEvent event) -> {
+                    if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2){
+                        int indiceRapporrt = Table.getSelectionModel().getSelectedIndex();
+                        if(Table.getSelectionModel().getSelectedItem().isLu() != true) {
+                            try {
+                                ModeleGsbRv.setRapportVisiteLu(Table.getSelectionModel().getSelectedItem().getNumero());
+                                System.out.println(Table.getSelectionModel().getSelectedItem().isLu());
+                            } catch (ConnexionException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        rafraichir();
+                        VueRapport vueRapport = new VueRapport(Table.getSelectionModel().getSelectedItem());
+                        Optional<Pair<String, String>> reponse = vueRapport.showAndWait();
+                        Table.setItems(rapportsVisites);
+                    }
+                }
+        );
+
         Table.setRowFactory(
                 ligne -> {
                     return new TableRow<RapportVisite>(){
@@ -128,7 +148,7 @@ public class PanneauRapports extends Parent {
                         protected void updateItem(RapportVisite item, boolean empty){
                             super.updateItem(item, empty);
                             if(item != null){
-                                if(item.isLu()){
+                                if(item.isLu() == true){
                                     setStyle("-fx-background-color: gold");
                                 }
                                 else{
@@ -137,25 +157,6 @@ public class PanneauRapports extends Parent {
                             }
                         }
                     };
-                }
-        );
-
-        Table.setOnMouseClicked(
-                (MouseEvent event) -> {
-                    if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2){
-                        int indiceRapporrt = Table.getSelectionModel().getSelectedIndex();
-                        if(Table.getSelectionModel().getSelectedItem().isLu() != true) {
-                            try {
-                                ModeleGsbRv.setRapportVisiteLu(Table.getSelectionModel().getSelectedItem().getNumero());
-                                Table.getSelectionModel().getSelectedItem().setLu(true);
-                            } catch (ConnexionException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        rafraichir();
-                    }
-                    VueRapport vueRapport = new VueRapport(Table.getSelectionModel().getSelectedItem());
-                    Optional<Pair<String, String>> reponse = vueRapport.showAndWait();
                 }
         );
 
@@ -182,9 +183,9 @@ public class PanneauRapports extends Parent {
     }
 
     public void rafraichir(){
-        System.out.println(cbVisiteurs.getValue().toString() + cbMois.getValue().toString() + cbAnnee.getValue());
+        //System.out.println(cbVisiteurs.getValue().toString() + cbMois.getValue().toString() + cbAnnee.getValue());
         try {
-            rapportsVisites = ModeleGsbRv.getRapportsVisites( cbVisiteurs.getValue().getMatricule() , cbMois.getValue().toString() , cbAnnee.getValue());
+            rapportsVisites = ModeleGsbRv.getRapportsVisites( cbVisiteurs.getValue().getMatricule() , cbMois.getValue().getText() , cbAnnee.getValue());
         } catch (ConnexionException e) {
             throw new RuntimeException(e);
         }

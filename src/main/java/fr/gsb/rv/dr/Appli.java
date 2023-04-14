@@ -97,6 +97,9 @@ public class Appli extends Application {
                                     Rapports.setVisible(true);
                                     Practiciens.setVisible(true);
                                 }
+                                else{
+                                    System.out.println("[NOk] Matricule ou mot de passe incorrect !");
+                                }
                             } catch (ConnexionException e) {
                                 throw new RuntimeException(e);
                             }

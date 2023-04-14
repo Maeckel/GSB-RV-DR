@@ -28,11 +28,12 @@ public class ModeleGsbRv {
 
         String requete = "select vis_nom , vis_prenom "
                 + "from Visiteur "
-                + "where vis_matricule = ?";
+                + "where vis_matricule = ? and vis_mdp = ?";
 
         try {
             PreparedStatement requetePreparee = (PreparedStatement) connexion.prepareStatement(requete);
             requetePreparee.setString(1, matricule);
+            requetePreparee.setString(2, mdp);
             ResultSet resultat = requetePreparee.executeQuery();
             if (resultat.next()) {
                 Visiteur visiteur = new Visiteur(matricule, resultat.getString("vis_nom"), resultat.getString("vis_prenom"));
@@ -133,6 +134,7 @@ public class ModeleGsbRv {
             if (resultat.next()) {
                 ObservableList<RapportVisite> rapportsVisites = FXCollections.observableArrayList();
                 RapportVisite rapportVisite1 = new RapportVisite(resultat.getInt("rap_num"), resultat.getDate("rap_date_visite"), resultat.getDate("rap_date_redaction"), resultat.getString("rap_bilan"), resultat.getString("mot_libelle"), resultat.getInt("rap_coef_confiance"), resultat.getBoolean("rap_lu"), new Visiteur(resultat.getString("Visiteur.vis_matricule"), resultat.getString("vis_nom"), resultat.getString("vis_prenom") ), new Praticien(resultat.getString("pra_nom") , resultat.getString("pra_ville"), resultat.getString("pra_adresse"), resultat.getString("pra_cp"), resultat.getString("pra_prenom")));
+                //System.out.println(rapportVisite1);
                 rapportsVisites.add(rapportVisite1);
                     while (resultat.next()) {
                         Integer num = resultat.getInt(1);
@@ -156,10 +158,11 @@ public class ModeleGsbRv {
                 requetePreparee.close();
                 return rapportsVisites;
             } else {
+                System.out.println("Pas de Rapport trouver !");
                 return null;
             }
         } catch (Exception e) {
-            System.out.println("Pas de Rapport trouver");
+            System.out.println("Pas de Rapport trouver !");
             return null;
         }
     }
