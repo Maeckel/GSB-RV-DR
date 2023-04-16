@@ -160,8 +160,8 @@ public class PanneauRapports extends Parent {
                 }
         );
 
-        VBox rapports = new VBox(30);
-        rapports.getChildren().add(new Label("Rapports"));
+        VBox rapports = new VBox(50);
+        rapports.getChildren().add(new Label("Veuillez seclectionner un visiteur ansi qu'un mois et une année :"));
         rapports.getChildren().add(cbVisiteurs);
         rapports.getChildren().add(cbMois);
         rapports.getChildren().add(cbAnnee);

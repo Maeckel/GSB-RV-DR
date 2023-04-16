@@ -162,6 +162,7 @@ public class Appli extends Application {
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
+                        PanneauPracticiens vuePracticiens = new PanneauPracticiens();
                         root.setCenter(vuePracticiens);
                         System.out.println("[Practiciens]" + " " + visiteur.getNom() + " " + visiteur.getPrenom()); //Affiche la chaine concaténée
                     }
